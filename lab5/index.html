@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Tree</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .hidden-tree {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Open Developer Tools (F12) to see the Christmas tree!</h1>
+    <pre class="hidden-tree" id="tree"></pre>
+    <script>
+        function tree(n) {
+            let treeStr = '';
+            treeStr += printTreeTop(n);
+            treeStr += printTreeBottom(n);
+            // This will only show in the developer console, not on the page
+            console.log(treeStr);
+        }
+
+        function printTreeTop(n) {
+            let result = '';
+            for (let i = 0; i < n; i++) {
+                let spaces = repeatchar(' ', n - i - 1);
+                let stars = repeatchar('*', 2 * i + 1);
+                result += spaces + stars + '\n';
+            }
+            return result;
+        }
+
+        function printTreeBottom(n) {
+            let result = '';
+            let spaces = repeatchar(' ', n - 1);
+            for (let i = 0; i < 3; i++) {
+                result += spaces + '*' + '\n';
+            }
+            return result;
+        }
+
+        function repeatchar(char, count) {
+            return char.repeat(count);
+        }
+
+        tree(4); // Call the tree function to log the tree to the console
+    </script>
+</body>
+</html>
