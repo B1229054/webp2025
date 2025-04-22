@@ -29,6 +29,79 @@
     </div>
     <button onclick="delOldData()">delOldData</button>
 
-    <script src="script.js"></script>
+    <script>
+        var openURL = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6";
+        var xhr = new XMLHttpRequest();
+        var dataset = [];
+        var filteredData = [];
+        var currentPage = 1;
+        var itemsPerPage = 10;
+
+        xhr.open('GET', openURL, true);
+        xhr.send();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                dataset = JSON.parse(this.responseText);
+                filteredData = dataset;
+                renderTable();
+            }
+        };
+
+        function delOldData() {
+            var table = document.getElementById("csie");
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+        }
+
+        function renderTable() {
+            delOldData();
+            let start = (currentPage - 1) * itemsPerPage;
+            let end = start + itemsPerPage;
+            let pageData = filteredData.slice(start, end);
+
+            var myTable = document.getElementById("csie");
+            pageData.forEach(function(data) {
+                var row = myTable.insertRow(-1);
+                row.insertCell(0).innerHTML = data['title'];
+                row.insertCell(1).innerHTML = data['showInfo'][0]['location'];
+                row.insertCell(2).innerHTML = data['showInfo'][0]['price'];
+            });
+            updatePageInfo();
+        }
+
+        function updatePageInfo() {
+            let totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            document.getElementById("page-info").innerText = `第 ${currentPage} 頁 / 共 ${totalPages} 頁`;
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        }
+
+        function nextPage() {
+            let totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        }
+
+        function onSearch() {
+            var keyword = document.getElementById("search").value.trim();
+            if (keyword === "") {
+                filteredData = dataset;
+            } else {
+                filteredData = dataset.filter(function(item) {
+                    return item['title'] && item['title'].includes(keyword);
+                });
+            }
+            currentPage = 1;
+            renderTable();
+        }
+    </script>
 </body>
 </html>
